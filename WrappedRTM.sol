@@ -2,23 +2,32 @@
 // Compatible with OpenZeppelin Contracts ^5.0.0
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
+import "./MintableToken.sol";
+import "./BurnableToken.sol";
 
-contract WrappedRTM is ERC20, ERC20Burnable, Ownable, ERC20Permit {
+contract WrappedRTM is MintableToken, BurnableToken {
     constructor(address initialOwner)
         ERC20("Wrapped RTM", "wRTM")
         Ownable(initialOwner)
-        ERC20Permit("Wrapped RTM")
     {}
-
-    function mint(address to, uint256 amount) public onlyOwner {
-        _mint(to, amount);
-    }
 
     function decimals() public view virtual override returns (uint8) {
         return 8;
+    }
+
+    function increaseApproval(address spender, uint256 addedValue) public returns (bool) {
+        _approve(msg.sender, spender, allowance(msg.sender, spender) + addedValue);
+        return true;
+    }
+
+    function decreaseApproval(address spender, uint256 subtractedValue) public returns (bool) {
+        uint256 currentAllowance = allowance(msg.sender, spender);
+        require(currentAllowance >= subtractedValue, "ERC20: decreased allowance below zero");
+        _approve(msg.sender, spender, currentAllowance - subtractedValue);
+        return true;
+    }
+    
+    function renounceOwnership() public view override onlyOwner {
+        revert("Renouncing ownership is blocked");
     }
 }
