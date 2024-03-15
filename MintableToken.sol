@@ -3,7 +3,8 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 
 /**
  * @title Mintable token
@@ -11,8 +12,9 @@ import "./ECDSA.sol";
  */
 abstract contract MintableToken is ERC20, Ownable {
     using ECDSA for bytes32;
+    using MessageHashUtils for bytes32;
 
-    bytes32 public lastTrans;
+    // bytes32 public lastTrans;
     mapping(bytes32 => bool) internal transactions;
 
     event Mint(address indexed to, uint256 amount, bytes32 trans);
@@ -24,13 +26,13 @@ abstract contract MintableToken is ERC20, Ownable {
      * @param trans The transaction id of the RTM transfer.
      * @return A boolean that indicates if the operation was successful.
      */
-    function mint(
-        address to,
-        uint256 amount,
-        bytes32 trans
-    ) public onlyOwner returns (bool) {
-        return _txMint(to, amount, trans);
-    }
+    // function mint(
+    //     address to,
+    //     uint256 amount,
+    //     bytes32 trans
+    // ) public onlyOwner returns (bool) {
+    //     return _txMint(to, amount, trans);
+    // }
 
     /**
      * @dev Function to mint tokens
@@ -58,9 +60,7 @@ abstract contract MintableToken is ERC20, Ownable {
         bytes32 trans,
         bytes memory approvalData
     ) public pure returns (address) {
-        bytes memory blob = abi.encodePacked(to, amount, trans);
-        bytes32 kec = keccak256(blob);
-        bytes32 mesg = kec.toEthSignedMessageHash();
+        bytes32 mesg = msgMint(to, amount, trans);
         address who = mesg.recover(approvalData);
         return who;
     }

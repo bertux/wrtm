@@ -1,347 +1,4 @@
 
-// File: @openzeppelin/contracts/utils/Nonces.sol
-
-
-// OpenZeppelin Contracts (last updated v5.0.0) (utils/Nonces.sol)
-pragma solidity ^0.8.20;
-
-/**
- * @dev Provides tracking nonces for addresses. Nonces will only increment.
- */
-abstract contract Nonces {
-    /**
-     * @dev The nonce used for an `account` is not the expected current nonce.
-     */
-    error InvalidAccountNonce(address account, uint256 currentNonce);
-
-    mapping(address account => uint256) private _nonces;
-
-    /**
-     * @dev Returns the next unused nonce for an address.
-     */
-    function nonces(address owner) public view virtual returns (uint256) {
-        return _nonces[owner];
-    }
-
-    /**
-     * @dev Consumes a nonce.
-     *
-     * Returns the current value and increments nonce.
-     */
-    function _useNonce(address owner) internal virtual returns (uint256) {
-        // For each account, the nonce has an initial value of 0, can only be incremented by one, and cannot be
-        // decremented or reset. This guarantees that the nonce never overflows.
-        unchecked {
-            // It is important to do x++ and not ++x here.
-            return _nonces[owner]++;
-        }
-    }
-
-    /**
-     * @dev Same as {_useNonce} but checking that `nonce` is the next valid for `owner`.
-     */
-    function _useCheckedNonce(address owner, uint256 nonce) internal virtual {
-        uint256 current = _useNonce(owner);
-        if (nonce != current) {
-            revert InvalidAccountNonce(owner, current);
-        }
-    }
-}
-
-// File: @openzeppelin/contracts/interfaces/IERC5267.sol
-
-
-// OpenZeppelin Contracts (last updated v5.0.0) (interfaces/IERC5267.sol)
-
-pragma solidity ^0.8.20;
-
-interface IERC5267 {
-    /**
-     * @dev MAY be emitted to signal that the domain could have changed.
-     */
-    event EIP712DomainChanged();
-
-    /**
-     * @dev returns the fields and values that describe the domain separator used by this contract for EIP-712
-     * signature.
-     */
-    function eip712Domain()
-        external
-        view
-        returns (
-            bytes1 fields,
-            string memory name,
-            string memory version,
-            uint256 chainId,
-            address verifyingContract,
-            bytes32 salt,
-            uint256[] memory extensions
-        );
-}
-
-// File: @openzeppelin/contracts/utils/StorageSlot.sol
-
-
-// OpenZeppelin Contracts (last updated v5.0.0) (utils/StorageSlot.sol)
-// This file was procedurally generated from scripts/generate/templates/StorageSlot.js.
-
-pragma solidity ^0.8.20;
-
-/**
- * @dev Library for reading and writing primitive types to specific storage slots.
- *
- * Storage slots are often used to avoid storage conflict when dealing with upgradeable contracts.
- * This library helps with reading and writing to such slots without the need for inline assembly.
- *
- * The functions in this library return Slot structs that contain a `value` member that can be used to read or write.
- *
- * Example usage to set ERC1967 implementation slot:
- * ```solidity
- * contract ERC1967 {
- *     bytes32 internal constant _IMPLEMENTATION_SLOT = 0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc;
- *
- *     function _getImplementation() internal view returns (address) {
- *         return StorageSlot.getAddressSlot(_IMPLEMENTATION_SLOT).value;
- *     }
- *
- *     function _setImplementation(address newImplementation) internal {
- *         require(newImplementation.code.length > 0);
- *         StorageSlot.getAddressSlot(_IMPLEMENTATION_SLOT).value = newImplementation;
- *     }
- * }
- * ```
- */
-library StorageSlot {
-    struct AddressSlot {
-        address value;
-    }
-
-    struct BooleanSlot {
-        bool value;
-    }
-
-    struct Bytes32Slot {
-        bytes32 value;
-    }
-
-    struct Uint256Slot {
-        uint256 value;
-    }
-
-    struct StringSlot {
-        string value;
-    }
-
-    struct BytesSlot {
-        bytes value;
-    }
-
-    /**
-     * @dev Returns an `AddressSlot` with member `value` located at `slot`.
-     */
-    function getAddressSlot(bytes32 slot) internal pure returns (AddressSlot storage r) {
-        /// @solidity memory-safe-assembly
-        assembly {
-            r.slot := slot
-        }
-    }
-
-    /**
-     * @dev Returns an `BooleanSlot` with member `value` located at `slot`.
-     */
-    function getBooleanSlot(bytes32 slot) internal pure returns (BooleanSlot storage r) {
-        /// @solidity memory-safe-assembly
-        assembly {
-            r.slot := slot
-        }
-    }
-
-    /**
-     * @dev Returns an `Bytes32Slot` with member `value` located at `slot`.
-     */
-    function getBytes32Slot(bytes32 slot) internal pure returns (Bytes32Slot storage r) {
-        /// @solidity memory-safe-assembly
-        assembly {
-            r.slot := slot
-        }
-    }
-
-    /**
-     * @dev Returns an `Uint256Slot` with member `value` located at `slot`.
-     */
-    function getUint256Slot(bytes32 slot) internal pure returns (Uint256Slot storage r) {
-        /// @solidity memory-safe-assembly
-        assembly {
-            r.slot := slot
-        }
-    }
-
-    /**
-     * @dev Returns an `StringSlot` with member `value` located at `slot`.
-     */
-    function getStringSlot(bytes32 slot) internal pure returns (StringSlot storage r) {
-        /// @solidity memory-safe-assembly
-        assembly {
-            r.slot := slot
-        }
-    }
-
-    /**
-     * @dev Returns an `StringSlot` representation of the string storage pointer `store`.
-     */
-    function getStringSlot(string storage store) internal pure returns (StringSlot storage r) {
-        /// @solidity memory-safe-assembly
-        assembly {
-            r.slot := store.slot
-        }
-    }
-
-    /**
-     * @dev Returns an `BytesSlot` with member `value` located at `slot`.
-     */
-    function getBytesSlot(bytes32 slot) internal pure returns (BytesSlot storage r) {
-        /// @solidity memory-safe-assembly
-        assembly {
-            r.slot := slot
-        }
-    }
-
-    /**
-     * @dev Returns an `BytesSlot` representation of the bytes storage pointer `store`.
-     */
-    function getBytesSlot(bytes storage store) internal pure returns (BytesSlot storage r) {
-        /// @solidity memory-safe-assembly
-        assembly {
-            r.slot := store.slot
-        }
-    }
-}
-
-// File: @openzeppelin/contracts/utils/ShortStrings.sol
-
-
-// OpenZeppelin Contracts (last updated v5.0.0) (utils/ShortStrings.sol)
-
-pragma solidity ^0.8.20;
-
-
-// | string  | 0xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA   |
-// | length  | 0x                                                              BB |
-type ShortString is bytes32;
-
-/**
- * @dev This library provides functions to convert short memory strings
- * into a `ShortString` type that can be used as an immutable variable.
- *
- * Strings of arbitrary length can be optimized using this library if
- * they are short enough (up to 31 bytes) by packing them with their
- * length (1 byte) in a single EVM word (32 bytes). Additionally, a
- * fallback mechanism can be used for every other case.
- *
- * Usage example:
- *
- * ```solidity
- * contract Named {
- *     using ShortStrings for *;
- *
- *     ShortString private immutable _name;
- *     string private _nameFallback;
- *
- *     constructor(string memory contractName) {
- *         _name = contractName.toShortStringWithFallback(_nameFallback);
- *     }
- *
- *     function name() external view returns (string memory) {
- *         return _name.toStringWithFallback(_nameFallback);
- *     }
- * }
- * ```
- */
-library ShortStrings {
-    // Used as an identifier for strings longer than 31 bytes.
-    bytes32 private constant FALLBACK_SENTINEL = 0x00000000000000000000000000000000000000000000000000000000000000FF;
-
-    error StringTooLong(string str);
-    error InvalidShortString();
-
-    /**
-     * @dev Encode a string of at most 31 chars into a `ShortString`.
-     *
-     * This will trigger a `StringTooLong` error is the input string is too long.
-     */
-    function toShortString(string memory str) internal pure returns (ShortString) {
-        bytes memory bstr = bytes(str);
-        if (bstr.length > 31) {
-            revert StringTooLong(str);
-        }
-        return ShortString.wrap(bytes32(uint256(bytes32(bstr)) | bstr.length));
-    }
-
-    /**
-     * @dev Decode a `ShortString` back to a "normal" string.
-     */
-    function toString(ShortString sstr) internal pure returns (string memory) {
-        uint256 len = byteLength(sstr);
-        // using `new string(len)` would work locally but is not memory safe.
-        string memory str = new string(32);
-        /// @solidity memory-safe-assembly
-        assembly {
-            mstore(str, len)
-            mstore(add(str, 0x20), sstr)
-        }
-        return str;
-    }
-
-    /**
-     * @dev Return the length of a `ShortString`.
-     */
-    function byteLength(ShortString sstr) internal pure returns (uint256) {
-        uint256 result = uint256(ShortString.unwrap(sstr)) & 0xFF;
-        if (result > 31) {
-            revert InvalidShortString();
-        }
-        return result;
-    }
-
-    /**
-     * @dev Encode a string into a `ShortString`, or write it to storage if it is too long.
-     */
-    function toShortStringWithFallback(string memory value, string storage store) internal returns (ShortString) {
-        if (bytes(value).length < 32) {
-            return toShortString(value);
-        } else {
-            StorageSlot.getStringSlot(store).value = value;
-            return ShortString.wrap(FALLBACK_SENTINEL);
-        }
-    }
-
-    /**
-     * @dev Decode a string that was encoded to `ShortString` or written to storage using {setWithFallback}.
-     */
-    function toStringWithFallback(ShortString value, string storage store) internal pure returns (string memory) {
-        if (ShortString.unwrap(value) != FALLBACK_SENTINEL) {
-            return toString(value);
-        } else {
-            return store;
-        }
-    }
-
-    /**
-     * @dev Return the length of a string that was encoded to `ShortString` or written to storage using
-     * {setWithFallback}.
-     *
-     * WARNING: This will return the "byte length" of the string. This may not reflect the actual length in terms of
-     * actual characters as the UTF-8 encoding of a single character can span over multiple bytes.
-     */
-    function byteLengthWithFallback(ShortString value, string storage store) internal view returns (uint256) {
-        if (ShortString.unwrap(value) != FALLBACK_SENTINEL) {
-            return byteLength(value);
-        } else {
-            return bytes(store).length;
-        }
-    }
-}
-
 // File: @openzeppelin/contracts/utils/math/SignedMath.sol
 
 
@@ -990,168 +647,6 @@ library MessageHashUtils {
     }
 }
 
-// File: @openzeppelin/contracts/utils/cryptography/EIP712.sol
-
-
-// OpenZeppelin Contracts (last updated v5.0.0) (utils/cryptography/EIP712.sol)
-
-pragma solidity ^0.8.20;
-
-
-
-
-/**
- * @dev https://eips.ethereum.org/EIPS/eip-712[EIP 712] is a standard for hashing and signing of typed structured data.
- *
- * The encoding scheme specified in the EIP requires a domain separator and a hash of the typed structured data, whose
- * encoding is very generic and therefore its implementation in Solidity is not feasible, thus this contract
- * does not implement the encoding itself. Protocols need to implement the type-specific encoding they need in order to
- * produce the hash of their typed data using a combination of `abi.encode` and `keccak256`.
- *
- * This contract implements the EIP 712 domain separator ({_domainSeparatorV4}) that is used as part of the encoding
- * scheme, and the final step of the encoding to obtain the message digest that is then signed via ECDSA
- * ({_hashTypedDataV4}).
- *
- * The implementation of the domain separator was designed to be as efficient as possible while still properly updating
- * the chain id to protect against replay attacks on an eventual fork of the chain.
- *
- * NOTE: This contract implements the version of the encoding known as "v4", as implemented by the JSON RPC method
- * https://docs.metamask.io/guide/signing-data.html[`eth_signTypedDataV4` in MetaMask].
- *
- * NOTE: In the upgradeable version of this contract, the cached values will correspond to the address, and the domain
- * separator of the implementation contract. This will cause the {_domainSeparatorV4} function to always rebuild the
- * separator from the immutable values, which is cheaper than accessing a cached version in cold storage.
- *
- * @custom:oz-upgrades-unsafe-allow state-variable-immutable
- */
-abstract contract EIP712 is IERC5267 {
-    using ShortStrings for *;
-
-    bytes32 private constant TYPE_HASH =
-        keccak256("EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)");
-
-    // Cache the domain separator as an immutable value, but also store the chain id that it corresponds to, in order to
-    // invalidate the cached domain separator if the chain id changes.
-    bytes32 private immutable _cachedDomainSeparator;
-    uint256 private immutable _cachedChainId;
-    address private immutable _cachedThis;
-
-    bytes32 private immutable _hashedName;
-    bytes32 private immutable _hashedVersion;
-
-    ShortString private immutable _name;
-    ShortString private immutable _version;
-    string private _nameFallback;
-    string private _versionFallback;
-
-    /**
-     * @dev Initializes the domain separator and parameter caches.
-     *
-     * The meaning of `name` and `version` is specified in
-     * https://eips.ethereum.org/EIPS/eip-712#definition-of-domainseparator[EIP 712]:
-     *
-     * - `name`: the user readable name of the signing domain, i.e. the name of the DApp or the protocol.
-     * - `version`: the current major version of the signing domain.
-     *
-     * NOTE: These parameters cannot be changed except through a xref:learn::upgrading-smart-contracts.adoc[smart
-     * contract upgrade].
-     */
-    constructor(string memory name, string memory version) {
-        _name = name.toShortStringWithFallback(_nameFallback);
-        _version = version.toShortStringWithFallback(_versionFallback);
-        _hashedName = keccak256(bytes(name));
-        _hashedVersion = keccak256(bytes(version));
-
-        _cachedChainId = block.chainid;
-        _cachedDomainSeparator = _buildDomainSeparator();
-        _cachedThis = address(this);
-    }
-
-    /**
-     * @dev Returns the domain separator for the current chain.
-     */
-    function _domainSeparatorV4() internal view returns (bytes32) {
-        if (address(this) == _cachedThis && block.chainid == _cachedChainId) {
-            return _cachedDomainSeparator;
-        } else {
-            return _buildDomainSeparator();
-        }
-    }
-
-    function _buildDomainSeparator() private view returns (bytes32) {
-        return keccak256(abi.encode(TYPE_HASH, _hashedName, _hashedVersion, block.chainid, address(this)));
-    }
-
-    /**
-     * @dev Given an already https://eips.ethereum.org/EIPS/eip-712#definition-of-hashstruct[hashed struct], this
-     * function returns the hash of the fully encoded EIP712 message for this domain.
-     *
-     * This hash can be used together with {ECDSA-recover} to obtain the signer of a message. For example:
-     *
-     * ```solidity
-     * bytes32 digest = _hashTypedDataV4(keccak256(abi.encode(
-     *     keccak256("Mail(address to,string contents)"),
-     *     mailTo,
-     *     keccak256(bytes(mailContents))
-     * )));
-     * address signer = ECDSA.recover(digest, signature);
-     * ```
-     */
-    function _hashTypedDataV4(bytes32 structHash) internal view virtual returns (bytes32) {
-        return MessageHashUtils.toTypedDataHash(_domainSeparatorV4(), structHash);
-    }
-
-    /**
-     * @dev See {IERC-5267}.
-     */
-    function eip712Domain()
-        public
-        view
-        virtual
-        returns (
-            bytes1 fields,
-            string memory name,
-            string memory version,
-            uint256 chainId,
-            address verifyingContract,
-            bytes32 salt,
-            uint256[] memory extensions
-        )
-    {
-        return (
-            hex"0f", // 01111
-            _EIP712Name(),
-            _EIP712Version(),
-            block.chainid,
-            address(this),
-            bytes32(0),
-            new uint256[](0)
-        );
-    }
-
-    /**
-     * @dev The name parameter for the EIP712 domain.
-     *
-     * NOTE: By default this function reads _name which is an immutable value.
-     * It only reads from storage if necessary (in case the value is too large to fit in a ShortString).
-     */
-    // solhint-disable-next-line func-name-mixedcase
-    function _EIP712Name() internal view returns (string memory) {
-        return _name.toStringWithFallback(_nameFallback);
-    }
-
-    /**
-     * @dev The version parameter for the EIP712 domain.
-     *
-     * NOTE: By default this function reads _version which is an immutable value.
-     * It only reads from storage if necessary (in case the value is too large to fit in a ShortString).
-     */
-    // solhint-disable-next-line func-name-mixedcase
-    function _EIP712Version() internal view returns (string memory) {
-        return _version.toStringWithFallback(_versionFallback);
-    }
-}
-
 // File: @openzeppelin/contracts/utils/cryptography/ECDSA.sol
 
 
@@ -1327,99 +822,6 @@ library ECDSA {
             revert ECDSAInvalidSignatureS(errorArg);
         }
     }
-}
-
-// File: @openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol
-
-
-// OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/extensions/IERC20Permit.sol)
-
-pragma solidity ^0.8.20;
-
-/**
- * @dev Interface of the ERC20 Permit extension allowing approvals to be made via signatures, as defined in
- * https://eips.ethereum.org/EIPS/eip-2612[EIP-2612].
- *
- * Adds the {permit} method, which can be used to change an account's ERC20 allowance (see {IERC20-allowance}) by
- * presenting a message signed by the account. By not relying on {IERC20-approve}, the token holder account doesn't
- * need to send a transaction, and thus is not required to hold Ether at all.
- *
- * ==== Security Considerations
- *
- * There are two important considerations concerning the use of `permit`. The first is that a valid permit signature
- * expresses an allowance, and it should not be assumed to convey additional meaning. In particular, it should not be
- * considered as an intention to spend the allowance in any specific way. The second is that because permits have
- * built-in replay protection and can be submitted by anyone, they can be frontrun. A protocol that uses permits should
- * take this into consideration and allow a `permit` call to fail. Combining these two aspects, a pattern that may be
- * generally recommended is:
- *
- * ```solidity
- * function doThingWithPermit(..., uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s) public {
- *     try token.permit(msg.sender, address(this), value, deadline, v, r, s) {} catch {}
- *     doThing(..., value);
- * }
- *
- * function doThing(..., uint256 value) public {
- *     token.safeTransferFrom(msg.sender, address(this), value);
- *     ...
- * }
- * ```
- *
- * Observe that: 1) `msg.sender` is used as the owner, leaving no ambiguity as to the signer intent, and 2) the use of
- * `try/catch` allows the permit to fail and makes the code tolerant to frontrunning. (See also
- * {SafeERC20-safeTransferFrom}).
- *
- * Additionally, note that smart contract wallets (such as Argent or Safe) are not able to produce permit signatures, so
- * contracts should have entry points that don't rely on permit.
- */
-interface IERC20Permit {
-    /**
-     * @dev Sets `value` as the allowance of `spender` over ``owner``'s tokens,
-     * given ``owner``'s signed approval.
-     *
-     * IMPORTANT: The same issues {IERC20-approve} has related to transaction
-     * ordering also apply here.
-     *
-     * Emits an {Approval} event.
-     *
-     * Requirements:
-     *
-     * - `spender` cannot be the zero address.
-     * - `deadline` must be a timestamp in the future.
-     * - `v`, `r` and `s` must be a valid `secp256k1` signature from `owner`
-     * over the EIP712-formatted function arguments.
-     * - the signature must use ``owner``'s current nonce (see {nonces}).
-     *
-     * For more information on the signature format, see the
-     * https://eips.ethereum.org/EIPS/eip-2612#specification[relevant EIP
-     * section].
-     *
-     * CAUTION: See Security Considerations above.
-     */
-    function permit(
-        address owner,
-        address spender,
-        uint256 value,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    ) external;
-
-    /**
-     * @dev Returns the current nonce for `owner`. This value must be
-     * included whenever a signature is generated for {permit}.
-     *
-     * Every successful call to {permit} increases ``owner``'s nonce by one. This
-     * prevents a signature from being used multiple times.
-     */
-    function nonces(address owner) external view returns (uint256);
-
-    /**
-     * @dev Returns the domain separator used in the encoding of the signature for {permit}, as defined by {EIP712}.
-     */
-    // solhint-disable-next-line func-name-mixedcase
-    function DOMAIN_SEPARATOR() external view returns (bytes32);
 }
 
 // File: @openzeppelin/contracts/interfaces/draft-IERC6093.sol
@@ -2147,133 +1549,133 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
     }
 }
 
-// File: @openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol
+// File: BurnableToken.sol
 
-
-// OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/extensions/ERC20Permit.sol)
 
 pragma solidity ^0.8.20;
 
 
-
-
-
-
 /**
- * @dev Implementation of the ERC20 Permit extension allowing approvals to be made via signatures, as defined in
- * https://eips.ethereum.org/EIPS/eip-2612[EIP-2612].
- *
- * Adds the {permit} method, which can be used to change an account's ERC20 allowance (see {IERC20-allowance}) by
- * presenting a message signed by the account. By not relying on `{IERC20-approve}`, the token holder account doesn't
- * need to send a transaction, and thus is not required to hold Ether at all.
+ * @title Burnable Token
+ * @dev Token that can be irreversibly burned (destroyed).
  */
-abstract contract ERC20Permit is ERC20, IERC20Permit, EIP712, Nonces {
-    bytes32 private constant PERMIT_TYPEHASH =
-        keccak256("Permit(address owner,address spender,uint256 value,uint256 nonce,uint256 deadline)");
+abstract contract BurnableToken is ERC20 {
+    
+    event Burn(address indexed burner, uint256 value, bytes addr);
 
     /**
-     * @dev Permit deadline has expired.
+     * @dev Burns a specific amount of tokens.
+     * @param value The amount of token to be burned.
+     * @param addr RTM address.
      */
-    error ERC2612ExpiredSignature(uint256 deadline);
+    function burn(uint256 value, bytes memory addr) public {
+        require(addr.length <= 70, "Bad Addr format");
+        require(addr.length >= 33, "Bad Addr format");
 
-    /**
-     * @dev Mismatched signature.
-     */
-    error ERC2612InvalidSigner(address signer, address owner);
-
-    /**
-     * @dev Initializes the {EIP712} domain separator using the `name` parameter, and setting `version` to `"1"`.
-     *
-     * It's a good idea to use the same `name` that is defined as the ERC20 token name.
-     */
-    constructor(string memory name) EIP712(name, "1") {}
-
-    /**
-     * @inheritdoc IERC20Permit
-     */
-    function permit(
-        address owner,
-        address spender,
-        uint256 value,
-        uint256 deadline,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    ) public virtual {
-        if (block.timestamp > deadline) {
-            revert ERC2612ExpiredSignature(deadline);
-        }
-
-        bytes32 structHash = keccak256(abi.encode(PERMIT_TYPEHASH, owner, spender, value, _useNonce(owner), deadline));
-
-        bytes32 hash = _hashTypedDataV4(structHash);
-
-        address signer = ECDSA.recover(hash, v, r, s);
-        if (signer != owner) {
-            revert ERC2612InvalidSigner(signer, owner);
-        }
-
-        _approve(owner, spender, value);
-    }
-
-    /**
-     * @inheritdoc IERC20Permit
-     */
-    function nonces(address owner) public view virtual override(IERC20Permit, Nonces) returns (uint256) {
-        return super.nonces(owner);
-    }
-
-    /**
-     * @inheritdoc IERC20Permit
-     */
-    // solhint-disable-next-line func-name-mixedcase
-    function DOMAIN_SEPARATOR() external view virtual returns (bytes32) {
-        return _domainSeparatorV4();
-    }
-}
-
-// File: @openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol
-
-
-// OpenZeppelin Contracts (last updated v5.0.0) (token/ERC20/extensions/ERC20Burnable.sol)
-
-pragma solidity ^0.8.20;
-
-
-
-/**
- * @dev Extension of {ERC20} that allows token holders to destroy both their own
- * tokens and those that they have an allowance for, in a way that can be
- * recognized off-chain (via event analysis).
- */
-abstract contract ERC20Burnable is Context, ERC20 {
-    /**
-     * @dev Destroys a `value` amount of tokens from the caller.
-     *
-     * See {ERC20-_burn}.
-     */
-    function burn(uint256 value) public virtual {
         _burn(_msgSender(), value);
+
+        emit Burn(_msgSender(), value, addr);
     }
 
-    /**
-     * @dev Destroys a `value` amount of tokens from `account`, deducting from
-     * the caller's allowance.
-     *
-     * See {ERC20-_burn} and {ERC20-allowance}.
-     *
-     * Requirements:
-     *
-     * - the caller must have allowance for ``accounts``'s tokens of at least
-     * `value`.
-     */
-    function burnFrom(address account, uint256 value) public virtual {
-        _spendAllowance(account, _msgSender(), value);
-        _burn(account, value);
-    }
 }
 
-// File: contracts/WrappedRTM.sol
+// File: MintableToken.sol
+
+
+pragma solidity ^0.8.20;
+
+
+
+
+
+/**
+ * @title Mintable token
+ * @dev Simple ERC20 Token example, with mintable token creation
+ */
+abstract contract MintableToken is ERC20, Ownable {
+    using ECDSA for bytes32;
+    using MessageHashUtils for bytes32;
+
+    // bytes32 public lastTrans;
+    mapping(bytes32 => bool) internal transactions;
+
+    event Mint(address indexed to, uint256 amount, bytes32 trans);
+
+    /**
+     * @dev Function to mint tokens
+     * @param to The address that will receive the minted tokens.
+     * @param amount The amount of tokens to mint.
+     * @param trans The transaction id of the RTM transfer.
+     * @return A boolean that indicates if the operation was successful.
+     */
+    // function mint(
+    //     address to,
+    //     uint256 amount,
+    //     bytes32 trans
+    // ) public onlyOwner returns (bool) {
+    //     return _txMint(to, amount, trans);
+    // }
+
+    /**
+     * @dev Function to mint tokens
+     * @param to The address that will receive the minted tokens.
+     * @param amount The amount of tokens to mint.
+     * @param trans The transaction id of the RTM transfer.
+     * @param approvalData The data signed by owner.
+     * @return A boolean that indicates if the operation was successful.
+     */
+    function relayMint(
+        address to,
+        uint256 amount,
+        bytes32 trans,
+        bytes memory approvalData
+    ) public returns (bool) {
+        bytes memory blob = abi.encodePacked(to, amount, trans);
+        address who = keccak256(blob).toEthSignedMessageHash().recover(approvalData);
+        require(who == owner(), "Wrong signer");
+        return _txMint(to, amount, trans);
+    }
+
+    function whoMint(
+        address to,
+        uint256 amount,
+        bytes32 trans,
+        bytes memory approvalData
+    ) public pure returns (address) {
+        bytes32 mesg = msgMint(to, amount, trans);
+        address who = mesg.recover(approvalData);
+        return who;
+    }
+
+    function msgMint(
+        address to,
+        uint256 amount,
+        bytes32 trans
+    ) public pure returns (bytes32) {
+        bytes memory blob = abi.encodePacked(to, amount, trans);
+        bytes32 kec = keccak256(blob);
+        bytes32 mesg = kec.toEthSignedMessageHash();
+        return mesg;
+    }
+
+    function _txMint(
+        address to,
+        uint256 amount,
+        bytes32 trans
+    ) internal returns (bool) {
+        require(trans != bytes32(0), "Empty tx");
+        require(!transactions[trans], "Existing tx");
+        
+        transactions[trans] = true;
+        _mint(to, amount);
+
+        emit Mint(to, amount, trans);
+
+        return true;
+    }
+
+}
+// File: WrappedRTM.sol
 
 
 // Compatible with OpenZeppelin Contracts ^5.0.0
@@ -2281,20 +1683,29 @@ pragma solidity ^0.8.20;
 
 
 
-
-
-contract WrappedRTM is ERC20, ERC20Burnable, Ownable, ERC20Permit {
+contract WrappedRTM is MintableToken, BurnableToken {
     constructor(address initialOwner)
         ERC20("Wrapped RTM", "wRTM")
         Ownable(initialOwner)
-        ERC20Permit("Wrapped RTM")
     {}
-
-    function mint(address to, uint256 amount) public onlyOwner {
-        _mint(to, amount);
-    }
 
     function decimals() public view virtual override returns (uint8) {
         return 8;
     }
+
+    // function increaseApproval(address spender, uint256 addedValue) public returns (bool) {
+    //     _approve(msg.sender, spender, allowance(msg.sender, spender) + addedValue);
+    //     return true;
+    // }
+
+    // function decreaseApproval(address spender, uint256 subtractedValue) public returns (bool) {
+    //     uint256 currentAllowance = allowance(msg.sender, spender);
+    //     require(currentAllowance >= subtractedValue, "ERC20: decreased allowance below zero");
+    //     _approve(msg.sender, spender, currentAllowance - subtractedValue);
+    //     return true;
+    // }
+
+    // function renounceOwnership() public view override onlyOwner {
+    //     revert("Renouncing ownership is blocked");
+    // }
 }
